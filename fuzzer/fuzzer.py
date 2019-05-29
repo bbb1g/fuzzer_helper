@@ -31,6 +31,12 @@ class Fuzzer(object):
     
     self.make_env()
 
+    dict_file = os.path.join(self.job_dir, os.path.basename(binary_path)+".dict")
+    if os.path.exists(dict_file):
+      self.dict = dict_file
+    else:
+      self.dict = None
+
   def start_fuzzer(self):
     args = ["afl-fuzz"]
 
@@ -39,6 +45,11 @@ class Fuzzer(object):
     args += ["-m", "none"]
 
     args += ["-M", "master"]
+
+    if self.dict:
+      args += ["-x", self.dict]
+      print "using dict %s"%(self.dict)
+    
     args += ["-Q"]    
     args += ["--"]
     args += [self.binary_path]
